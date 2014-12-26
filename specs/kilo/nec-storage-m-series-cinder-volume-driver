@@ -1,0 +1,119 @@
+Cinder volume driver for NEC Storage M Series
+https://blueprints.launchpad.net/cinder/+spec/nec-m-series-cinder-driver
+
+This is to enable OpenStack to work on top of NEC Storage M Series.
+
+- Problem description
+This is a new Cinder driver that would enable Open Stack to work on top of NEC Storage M Series.
+The following diagram shows the command and data paths.
+
++----------------+                 +------------------+
+|                |  Command        |                  |
+|                |  Path           |  Cinder +        |
+|  Nova          +---------------> |  Cinder Volume   |
+|                |                 |                  |
+|                |                 |                  |
++-----+----------+                 +--------+---------+
+      |                                     |
+      |                                     |
+      |                                     |  +---------------------------+
+      |                                     |  |                           |
+ Command                                    +--+  Cinder volume driver     |
+ Path                                          |  for NEC Storage M Series |
+      |                                        |                           |
+      |                                        |                           |
+      |                                        +------+--------------------+
+      |                                               |
+      |                                               |
+      |                                               |
+      |                                    NEC Storage M Series CLI Command
+      |                                               |
+      v                                               |
++----------------+                                    |    +-----------------+
+|                |                                    |    |                 |
+|  Compute       |                                    |    |                 |
+|                |                                    +---->    NEC Storage  |
+|                |           Data Link                     |    M Series     |
+|                +-----------------------------------------+                 |
++----------------+                                         +-----------------+
+
+- Proposed change
+The new driver will add support for NEC Storage M Series as backend storage in Cinder.
+The driver supports the following APIs:
+* Volume Create/Delete
+* Volume Attach/Detach
+* Snapshot Create/Delete
+* Create Volume from Snapshot
+* Get Volume Stats
+* Copy Image to Volume
+* Copy Volume to Image
+* Clone Volume
+* Extend Volume
+* Volume Migration (host assisted)
+
+- Alternatives
+None
+
+- Data model impact
+None
+
+- REST API impact
+None
+
+- Security impact
+None
+
+- Notifications impact
+None
+
+- Other end user impact
+Addition of Cinder volume driver for NEC Storage M Series will allow the end user to use NEC Storage M Series as backend storage in Cinder.
+
+- Performance Impact
+None
+
+- Other deployer impact
+The driver can be configured with the following parameters in cinder.conf: 
+* volume_driver - In the case of iSCSI interfaces:
+                   Specify cinder.volume.drivers.nec.volume.NECStorageDDRISCSIDriver
+                  In the case of FC interfaces:
+                   Specify cinder.volume.drivers.nec.volume.NECStorageFCDriver
+* nec_ismcli_fip - FIP for NEC Storage M Series
+* nec_ismcli_user - user name for NEC Storage M Series management interface 
+* nec_ismcli_password - password for user 
+* nec_pools - storage pool to use for volume creation 
+* nec_backup_pools - storage pool to use for snapshot creation 
+* nec_ldset - Acccess control for the compute node
+* nec_ldset_for_controller_node - Acccess control for the controller node
+
+- Developer impact
+None
+
+- Implementation
+
+- Assignee(s)
+
+Primary assignee:
+xxxx
+Other contributors:
+None
+
+- Work Items
+iSCSI and FC common driver:
+ volume_common.py Common class of FC and iSCSI.
+ volume.py Specific class of iSCSI and specific class of FC.
+ cli.py Specific class of execute to cli commands.
+ lock.py Specific class of exclusive access to storage.
+
+- Dependencies
+None
+
+- Testing
+Continuous integration as required for all drivers in the Juno timeframe.
+
+- Documentation Impact
+Support Matrix needs to be updated to includeNEC Storage M Series support. https://wiki.openstack.org/wiki/CinderSupportMatrix
+Block storage documentation needs to be updated to include NEC Storage M Series volume driver information in the volume drivers section. http://docs.openstack.org/
+
+- References
+None
